@@ -1,0 +1,29 @@
+{% extends 'blog/base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- White card layout for full blog content -->
+        <div class="col-md-8 mx-auto bg-white p-5 rounded shadow-sm">
+            
+            <!-- Blog Title -->
+            <h1 class="fw-bold text-dark mb-3">{{ post.title }}</h1>
+            
+            <!-- Publish Date -->
+            <p class="text-muted small">Published on: {{ post.created_at|date:"F d, Y" }}</p>
+            
+            <hr class="my-4" style="border-top: 2px solid #eee;">
+            
+            <!-- Blog Main Content Body -->
+            <p class="fs-5 text-secondary" style="line-height: 1.8; white-space: pre-line;">
+                {{ post.content }}
+            </p>
+            
+            <!-- Back to Home Button with correct URL name -->
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary mt-4">← Back to Home</a>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

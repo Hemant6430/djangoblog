@@ -3,6 +3,57 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>Welcome to DjangoBlog Home page</h1>
-<p>very very nice very very clean</p>
+
+<div class="post-grid">
+
+    {% for post in posts %}
+
+    <article class="post-card">
+
+        <h2>{{ post.title }}</h2>
+
+        <p>
+            {{ post.content|truncatewords:20 }}
+        </p>
+
+        <a href="{% url 'post_detail' post.slug %}" class="read-more">
+            Read more
+        </a>
+
+    </article>
+
+    {% empty %}
+
+    <p>No posts found.</p>
+
+    {% endfor %}
+
+</div>
+
+<div class="pagination">
+
+    {% if posts.has_previous %}
+        <a href="?page={{ posts.previous_page_number }}">
+            Previous
+        </a>
+    {% endif %}
+
+    <span>
+        Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+    </span>
+
+    {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}">
+            Next
+        </a>
+    {% endif %}
+
+</div>
+
+<hr>
+
+<h2>Categories</h2>
+
+<p>Tech (5)</p>
+
 {% endblock %}
