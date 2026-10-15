@@ -1,6 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import CreateView
+
 from .models import Post, Category
+from .forms import PostForm, RegisterForm
 
 
 # Home page - Read
@@ -60,18 +65,78 @@ def post_detail(request, slug):
 
 
 # Create Post
+@login_required
 def post_create(request):
     if request.method == 'POST':
-        title = request.POST['title']
-        slug = request.POST['slug']
-        content = request.POST['content']
+        form = PostForm(request.POST)
 
-        Post.objects.create(
-            title=title,
-            slug=slug,
-            content=content
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = PostForm()
+
+    return render(
+        request,
+        'blog/post_form.html',
+        {'form': form}
+    )
+
+
+# Register
+class RegisterView(CreateView):
+    form_class = RegisterForm
+    template_name = "blog/register.html"
+    success_url = "/"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.object)
+        return response
+# Edit Post
+@login_required
+def post_edit(request, pk):
+    post = get_object_or_404(
+        Post,
+        pk=pk,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+        form = PostForm(
+            request.POST,
+            request.FILES,
+            instance=post
         )
 
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = PostForm(instance=post)
+
+    return render(
+        request,
+        'blog/post_form.html',
+        {'form': form, 'post': post}
+    )
+
+
+# Delete Post
+@login_required
+def post_delete(request, pk):
+    post = get_object_or_404(
+        Post,
+        pk=pk,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+        post.delete()
         return redirect('home')
 
-    return render(request, 'blog/post_form.html')
+    return render(
+        request,
+        'blog/post_confirm_delete.html',
+        {'post': post}
+    )

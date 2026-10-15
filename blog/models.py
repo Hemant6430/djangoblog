@@ -1,5 +1,7 @@
+
 from django.db import models
 from django.utils.text import slugify
+from PIL import Image
 
 
 class Category(models.Model):
@@ -23,10 +25,14 @@ class Post(models.Model):
     ]
 
     title = models.CharField(max_length=200)
-
     slug = models.SlugField(unique=True, blank=True)
-
     content = models.TextField()
+
+    image = models.ImageField(
+        upload_to="blog/images/",
+        blank=True,
+        null=True
+    )
 
     status = models.CharField(
         max_length=10,
@@ -53,8 +59,25 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+
+            while Post.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
         super().save(*args, **kwargs)
+
+        if self.image:
+            image_path = self.image.path
+
+            with Image.open(image_path) as img:
+                if img.height > 800 or img.width > 800:
+                    img.thumbnail((800, 800))
+                    img.save(image_path)
 
     def __str__(self):
         return self.title

@@ -1,3 +1,4 @@
+```html
 {% extends "blog/base.html" %}
 
 {% block title %}Home{% endblock %}
@@ -16,9 +17,24 @@
             {{ post.content|truncatewords:20 }}
         </p>
 
-        <a href="{% url 'post_detail' post.slug %}" class="read-more">
+        <a href="{% url 'post_detail' post.slug %}"
+           class="read-more">
             Read more
         </a>
+
+        {% if user.is_authenticated and post.author == user %}
+
+        <a href="{% url 'post_edit' post.pk %}"
+           class="btn btn-warning btn-sm">
+            Edit
+        </a>
+
+        <a href="{% url 'post_delete' post.pk %}"
+           class="btn btn-danger btn-sm">
+            Delete
+        </a>
+
+        {% endif %}
 
     </article>
 
@@ -57,3 +73,4 @@
 <p>Tech (5)</p>
 
 {% endblock %}
+```

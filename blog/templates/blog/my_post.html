@@ -1,0 +1,41 @@
+```html
+{% extends 'blog/base.html' %}
+
+{% block title %}My Posts{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4">My Posts</h2>
+
+    <a href="{% url 'post_create' %}" class="btn btn-primary mb-4">
+        Create New Post
+    </a>
+
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h4>{{ post.title }}</h4>
+                    <p>{{ post.content|truncatewords:25 }}</p>
+
+                    <a href="{% url 'post_detail' post.slug %}"
+                       class="btn btn-primary btn-sm">Read More</a>
+
+                    {% if request.user == post.author %}
+                    <a href="{% url 'post_edit' post.pk %}"
+                       class="btn btn-warning btn-sm">Edit</a>
+
+                    <a href="{% url 'post_delete' post.pk %}"
+                       class="btn btn-danger btn-sm">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>You have not created any posts yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+```

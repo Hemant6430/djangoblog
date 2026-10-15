@@ -1,0 +1,36 @@
+```html
+{% extends 'blog/base.html' %}
+
+{% block title %}Create Post{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h2 class="mb-4">Create Post</h2>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-primary">
+                            Save Post
+                        </button>
+
+                        <a href="{% url 'home' %}"
+                           class="btn btn-secondary">
+                            Cancel
+                        </a>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
